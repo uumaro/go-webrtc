@@ -22,6 +22,10 @@ COMMIT="88f5d9180eae78a6162cccd78850ff416eb82483"  # branch-heads/64
 # Values are from,
 #   https://github.com/golang/go/blob/master/src/go/build/syslist.go
 #   https://chromium.googlesource.com/chromium/src/+/64.0.3282.204/tools/gn/docs/reference.md
+#
+# Android steps from:
+#   https://www.chromium.org/developers/gn-build-configuration
+#   https://chromium.googlesource.com/chromium/src/+/master/docs/android_build_instructions.md
 
 oses=",linux:linux,darwin:mac,windows:win,android:android,"
 cpus=",386:x86,amd64:x64,arm:arm,"
@@ -32,6 +36,7 @@ get() {
 
 TARGET_OS=$(get $oses $OS)
 TARGET_CPU=$(get $cpus $ARCH)
+echo "Building for TARGET_OS $TARGET_OS and TARGET_CPU $TARGET_CPU"
 
 INCLUDE_DIR="$PROJECT_DIR/include"
 LIB_DIR="$PROJECT_DIR/lib"
@@ -79,7 +84,18 @@ else
 	popd
 fi
 
-if [ "$ARCH" = "arm" ]; then
+if [[ $TARGET_OS == 'android' ]]; then
+	echo "Setting gclient target_os to android"
+	echo "target_os = [ 'android' ]" >> $WEBRTC_DIR/.gclient
+	gclient config --name src $WEBRTC_REPO || exit 1
+	gclient sync --with_branch_heads -r $COMMIT || exit 1
+
+	echo "Installing Android build dependencies"
+	pushd $WEBRTC_SRC || exit 1
+	./build/install-build-deps-android.sh
+	gclient runhooks
+	popd
+elif [ "$ARCH" = "arm" ]; then
 	echo "Manually fetching arm sysroot"
 	pushd $WEBRTC_SRC || exit 1
 	./build/linux/sysroot_scripts/install-sysroot.py --arch=arm || exit 1
@@ -121,6 +137,8 @@ if [ "$OS" = "darwin" ]; then
 	find obj -name '*.o' > filelist
 	libtool -static -o libwebrtc-magic.a -filelist filelist
 	strip -S -x -o libwebrtc-magic.a libwebrtc-magic.a
+elif [ "$OS" = "android" ]; then
+	$WEBRTC_SRC/third_party/android_ndk/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ar crs libwebrtc-magic.a $(find obj -name '*.o')
 elif [ "$ARCH" = "arm" ]; then
 	arm-linux-gnueabihf-ar crs libwebrtc-magic.a $(find obj -name '*.o')
 else
