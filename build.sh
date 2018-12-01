@@ -5,6 +5,7 @@
 # For a cross compile:
 #   GOOS=linux GOOS=amd64 ./build.sh
 #   GOOS=linux GOOS=arm ./build.sh
+#   GOOS=android GOARCH=arm ./build.sh
 #   GOOS=darwin GOOS=amd64 ./build.sh
 # (For a cross-compile from linux-amd64 to linux-arm, you may need to install the binutils-arm-linux-gnueabihf package.)
 
