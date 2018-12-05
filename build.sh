@@ -92,8 +92,8 @@ if ! git diff-index --quiet HEAD --; then
 fi
 popd
 pushd $WEBRTC_DIR
-# "yes n" is to say "no" to the Google Play services license agreement and download.
-yes n | gclient sync --with_branch_heads -r $COMMIT || exit 1
+# "echo n" is to say "no" to the Google Play services license agreement and download.
+echo n | gclient sync --with_branch_heads -r $COMMIT || exit 1
 # Delete where the Google Play services downloads to, just to be sure.
 # First check that an ancestor directory of what we're deleting exists, so we're more likely to notice a source reorganization.
 [[ -d "$WEBRTC_SRC/third_party/android_tools/sdk/extras/google/m2repository" ]] || {
