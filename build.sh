@@ -94,8 +94,6 @@ fi
 if [[ $TARGET_OS == 'android' ]]; then
 	echo "Setting gclient target_os to android"
 	echo "target_os = [ 'android' ]" >> $WEBRTC_DIR/.gclient
-	gclient config --name src $WEBRTC_REPO || exit 1
-	gclient sync --with_branch_heads -r $COMMIT || exit 1
 
 	echo "Installing Android build dependencies"
 	pushd $WEBRTC_SRC || exit 1
