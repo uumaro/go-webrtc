@@ -66,30 +66,28 @@ else
 fi
 
 if [[ -d $WEBRTC_DIR ]]; then
-	echo "Syncing webrtc ..."
-	pushd $WEBRTC_SRC || exit 1
-	if ! git diff-index --quiet HEAD --; then
-		echo -en "\nOpen files present in $WEBRTC_SRC\nReset them? (y/N): "
-		read ANSWER
-		if [ "$ANSWER" != "y" ]; then
-			echo "*** Cancelled ***"
-			exit 1
-		fi
-		git reset --hard HEAD || exit 1
-	fi
-	popd
-
-	pushd $WEBRTC_DIR
-	gclient sync --with_branch_heads -r $COMMIT || exit 1
-	popd
-else
 	echo "Getting webrtc ..."
 	mkdir -p $WEBRTC_DIR
 	pushd $WEBRTC_DIR
 	gclient config --name src $WEBRTC_REPO || exit 1
-	gclient sync --with_branch_heads -r $COMMIT || exit 1
 	popd
 fi
+
+echo "Syncing webrtc ..."
+pushd $WEBRTC_SRC || exit 1
+if ! git diff-index --quiet HEAD --; then
+	echo -en "\nOpen files present in $WEBRTC_SRC\nReset them? (y/N): "
+	read ANSWER
+	if [ "$ANSWER" != "y" ]; then
+		echo "*** Cancelled ***"
+		exit 1
+	fi
+	git reset --hard HEAD || exit 1
+fi
+popd
+pushd $WEBRTC_DIR
+gclient sync --with_branch_heads -r $COMMIT || exit 1
+popd
 
 if [[ $TARGET_OS == 'android' ]]; then
 	echo "Setting gclient target_os to android"
