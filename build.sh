@@ -147,11 +147,11 @@ if [ "$OS" = "darwin" ]; then
 	libtool -static -o libwebrtc-magic.a -filelist filelist
 	strip -S -x -o libwebrtc-magic.a libwebrtc-magic.a
 elif [ "$OS" = "android" ]; then
-	$WEBRTC_SRC/third_party/android_tools/ndk/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ar crs libwebrtc-magic.a $(find obj -name '*.o')
+	$WEBRTC_SRC/third_party/android_tools/ndk/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-ar crsD libwebrtc-magic.a $(find obj -name '*.o')
 elif [ "$ARCH" = "arm" ]; then
-	arm-linux-gnueabihf-ar crs libwebrtc-magic.a $(find obj -name '*.o')
+	arm-linux-gnueabihf-ar crsD libwebrtc-magic.a $(find obj -name '*.o')
 else
-	ar crs libwebrtc-magic.a $(find obj -name '*.o')
+	ar crsD libwebrtc-magic.a $(find obj -name '*.o')
 fi
 OUT_LIBRARY=$LIB_DIR/libwebrtc-$OS-$ARCH-magic.a
 mv libwebrtc-magic.a ${OUT_LIBRARY}
