@@ -73,6 +73,12 @@ if [[ -d $WEBRTC_DIR ]]; then
 	popd
 fi
 
+if [[ $TARGET_OS == 'android' ]]; then
+	echo "Setting gclient target_os to android"
+	# Whacky sed to append 'android' to the target_os list, without clobbering what may be there already.
+	sed -i "/^target_os *= *.*\\<android\\>/{p;h;d}; /^target_os *= */{s/ *]/, 'android'&/;p;h;d}; \${x;s/^target_os/&/;tx;atarget_os = [ 'android' ]"$'\n'";:x x}" $WEBRTC_DIR/.gclient
+fi
+
 echo "Syncing webrtc ..."
 pushd $WEBRTC_SRC || exit 1
 if ! git diff-index --quiet HEAD --; then
@@ -90,13 +96,9 @@ gclient sync --with_branch_heads -r $COMMIT || exit 1
 popd
 
 if [[ $TARGET_OS == 'android' ]]; then
-	echo "Setting gclient target_os to android"
-	echo "target_os = [ 'android' ]" >> $WEBRTC_DIR/.gclient
-
 	echo "Installing Android build dependencies"
 	pushd $WEBRTC_SRC || exit 1
 	./build/install-build-deps-android.sh
-	gclient runhooks
 	popd
 elif [ "$ARCH" = "arm" ]; then
 	echo "Manually fetching arm sysroot"
