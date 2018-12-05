@@ -6,8 +6,9 @@
 #   GOOS=linux GOARCH=amd64 ./build.sh
 #   GOOS=linux GOARCH=arm ./build.sh
 #   GOOS=android GOARCH=arm ./build.sh
-# (For a cross-compile from linux-amd64 to linux-arm, you may need to install the binutils-arm-linux-gnueabihf package.)
 # For macOS (GOOS=darwin GOARCH=amd64), you can currently only do a native compile.
+# For a cross-compile to linux-arm, you need to install the binutils-arm-linux-gnueabihf package.
+# For a cross-compile to android-arm, first run third_party/webrtc/src/build/install-build-deps-android.sh to install needed dependencies.
 
 PROJECT_DIR=$(pwd)
 THIRD_PARTY_DIR="$PROJECT_DIR/third_party"
@@ -103,12 +104,7 @@ echo n | gclient sync --with_branch_heads -r $COMMIT || exit 1
 rm -rf "$WEBRTC_SRC/third_party/android_tools/sdk/extras/google/m2repository/com/google/android/gms"
 popd
 
-if [[ $TARGET_OS == 'android' ]]; then
-	echo "Installing Android build dependencies"
-	pushd $WEBRTC_SRC || exit 1
-	./build/install-build-deps-android.sh
-	popd
-elif [ "$ARCH" = "arm" ]; then
+if [ "$ARCH" = "arm" ]; then
 	echo "Manually fetching arm sysroot"
 	pushd $WEBRTC_SRC || exit 1
 	./build/linux/sysroot_scripts/install-sysroot.py --arch=arm || exit 1
