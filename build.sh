@@ -66,7 +66,7 @@ else
 	git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git $DEPOT_TOOLS_DIR || exit 1
 fi
 
-if [[ -d $WEBRTC_DIR ]]; then
+if [[ ! -d $WEBRTC_DIR ]]; then
 	echo "Getting webrtc ..."
 	mkdir -p $WEBRTC_DIR
 	pushd $WEBRTC_DIR
