@@ -81,17 +81,17 @@ if [[ $TARGET_OS == 'android' ]]; then
 fi
 
 echo "Syncing webrtc ..."
-pushd $WEBRTC_SRC || exit 1
-if ! git diff-index --quiet HEAD --; then
-	echo -en "\nOpen files present in $WEBRTC_SRC\nReset them? (y/N): "
-	read ANSWER
-	if [ "$ANSWER" != "y" ]; then
-		echo "*** Cancelled ***"
-		exit 1
+if [[ -d $WEBRTC_SRC ]]; then
+	if ! git diff-index --quiet HEAD --; then
+		echo -en "\nOpen files present in $WEBRTC_SRC\nReset them? (y/N): "
+		read ANSWER
+		if [ "$ANSWER" != "y" ]; then
+			echo "*** Cancelled ***"
+			exit 1
+		fi
+		git reset --hard HEAD || exit 1
 	fi
-	git reset --hard HEAD || exit 1
 fi
-popd
 pushd $WEBRTC_DIR
 # "echo n" is to say "no" to the Google Play services license agreement and download.
 echo n | gclient sync --with_branch_heads -r $COMMIT || exit 1
