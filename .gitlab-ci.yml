@@ -129,7 +129,7 @@ libwebrtc-linux-amd64-magic:
   <<: *artifacts-template
   script:
     - *build_env_setup
-    - ./build.sh linux amd64
+    - GOOS=linux GOARCH=amd64 ./build.sh
 
 libwebrtc-linux-arm-magic:
   only:
@@ -142,7 +142,7 @@ libwebrtc-linux-arm-magic:
   script:
     - *build_env_setup
     - apt-get -qy install --no-install-recommends binutils-arm-linux-gnueabihf
-    - ./build.sh linux arm
+    - GOOS=linux GOARCH=arm ./build.sh
 
 android:
   image: golang:1.11-stretch
@@ -157,19 +157,8 @@ android:
     - *build_env_setup
     - apt-get -qy install --no-install-recommends lsb-release sudo
     - export WEBRTC_SRC="$CI_PROJECT_DIR/third_party/webrtc/src"
-    # crazy workaround for the forced interactive license prompt for Play Services
-    - ./build.sh android arm || true
-    - cat third_party/webrtc/.gclient || true
-    - cat third_party/webrtc/.gclient_entries || true
     - export ANDROID_HOME=$WEBRTC_SRC/third_party/android_tools/sdk
-    - ls -l $WEBRTC_SRC/third_party || true # DELETEME
-    - printf 'y\ny\ny\ny\ny\ny\ny\ny\n' | $ANDROID_HOME/tools/bin/sdkmanager --licenses
-    - echo y | $ANDROID_HOME/tools/bin/sdkmanager "extras;google;google_play_services"
-    - echo y | $ANDROID_HOME/tools/bin/sdkmanager "extras;google;m2repository"
-    - sed -i 's/^\( *\)\(if utils\.FileEquals(expected_license_path, actual_license_path):\)/\1return True\n\1\2/' $WEBRTC_SRC/build/android/play_services/update.py
-    - git -C $WEBRTC_SRC/build add android/play_services/update.py
-    - git -C $WEBRTC_SRC/build commit android/play_services/update.py -m "disable play license prompt"
-    - ./build.sh android arm
+    - GOOS=android GOARCH=arm ./build.sh
 
     - go get -u golang.org/x/mobile/cmd/gomobile
     - cd $GOPATH/src/golang.org/x/mobile/cmd/gomobile

@@ -16,16 +16,10 @@ WEBRTC_REPO="https://chromium.googlesource.com/external/webrtc"
 WEBRTC_DIR="$THIRD_PARTY_DIR/webrtc"
 WEBRTC_SRC="$WEBRTC_DIR/src"
 DEPOT_TOOLS_DIR="$THIRD_PARTY_DIR/depot_tools"
+OS=$(go env GOOS)
+ARCH=$(go env GOARCH)
 CONFIG="Release"
 COMMIT="88f5d9180eae78a6162cccd78850ff416eb82483"  # branch-heads/64
-
-if [ -z "$1" ]; then
-    OS=$(go env GOOS)
-    ARCH=$(go env GOARCH)
-else
-    OS=$1
-    ARCH=$2
-fi
 
 # Values are from,
 #   https://github.com/golang/go/blob/master/src/go/build/syslist.go
