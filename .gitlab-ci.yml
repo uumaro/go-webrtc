@@ -158,7 +158,7 @@ android:
     - apt-get -qy install --no-install-recommends lsb-release sudo
     - export WEBRTC_SRC="$CI_PROJECT_DIR/third_party/webrtc/src"
     - export ANDROID_HOME=$WEBRTC_SRC/third_party/android_tools/sdk
-    - GOOS=android GOARCH=arm ./build.sh
+    - GOOS=android GOARCH=arm ./build.sh || ( $WEBRTC_SRC/build/install-build-deps-android.sh && GOOS=android GOARCH=arm ./build.sh )
 
     - go get -u golang.org/x/mobile/cmd/gomobile
     - cd $GOPATH/src/golang.org/x/mobile/cmd/gomobile
