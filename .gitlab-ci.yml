@@ -166,7 +166,7 @@ android:
     - cd $CI_PROJECT_DIR
     - cp webrtc-android-armeabi-v7a.pc webrtc-linux-arm.pc  # cgo uses both on Android :-/
     - export WEBRTC_SRC="$CI_PROJECT_DIR/third_party/webrtc/src"
-    - export ANDROID_NDK_HOME="$WEBRTC_SRC/third_party/android_ndk"
+    - export ANDROID_NDK_HOME="$WEBRTC_SRC/third_party/android_tools/ndk"
     - export CGO_CXXFLAGS=-D_GLIBCXX_USE_CXX_ABI=1
     - gomobile init -ndk $ANDROID_NDK_HOME
     - gomobile bind -v -x -target=android github.com/keroserene/go-webrtc
